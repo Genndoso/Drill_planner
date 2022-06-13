@@ -47,9 +47,16 @@ class DrillPlaner():
     return {tuple(a): nx.path_weight(self.G, a, weight=weight)}
   def plot_graph(self):
     nx_graph(self.G,plot_shortest_path=True)
+
+      #https://vdocuments.net/metrics-in-process-discovery-2015-12-21-metrics-in-process-discovery-fabian.html?page=17
   def IoU_metric(self, graph2):
+      #structural similarity
     return len(set(self.graph_nodes).intersection(set(graph2.graph_nodes)))/len(set(self.graph_nodes).union(set(graph2.graph_nodes)))
   def NAM_metric(self, graph2):
+      # Construct the coverability tree for two miners
+      # Get the principal transition sequences from the trees.
+      # Return the PTS-Based Similarity Measure based on the sequences found.
+      #behavioural similarity
     all_nodes = list(set(self.graph_nodes).union(set(graph2.graph_nodes)))
     NAM1 = np.zeros((len(all_nodes), len(all_nodes)))
     NAM2 = np.copy(NAM1)
@@ -62,7 +69,7 @@ class DrillPlaner():
 
 
 
-
+# networkx graph plotting
 def nx_graph(G,plot_shortest_path = False):
   plt.subplots(1,1,figsize=(15,10))
 
