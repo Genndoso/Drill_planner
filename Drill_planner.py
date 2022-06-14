@@ -120,26 +120,25 @@ class GraphMiner():
 class DrillGraphMiner():
   def __init__(self, data, time_name, code_name):
     graph_codes = []
-    codes = data[code_name].to_numpy() #can pass codes and times instead of raw data, suitably changing the code
-    times = np.round(data[time_name].to_numpy(),2)
+    codes = data[code_name].to_numpy()  # can pass codes and times instead of raw data, suitably changing the code
+    times = np.round(data[time_name].to_numpy(), 2)
     events = ['startevent'] + list(set(codes)) + ['endevent']
 
     for i in range(len(codes[1:])):
-      graph_codes.append(GraphMiner(codes[i+1], codes[i], times[i+1],times[i]))
-    jew.append(GraphMiner('endevent', codes[-1], times[-1]+1e-10, times[-1]))
-    jew.insert(0, GraphMiner(codes[0], 'startevent', times[0], times[0]-1e-10))
+      graph_codes.append(GraphMiner(codes[i + 1], codes[i], times[i + 1], times[i]))
+    graph_codes.append(GraphMiner('endevent', codes[-1], times[-1] + 1e-10, times[-1]))
+    graph_codes.insert(0, GraphMiner(codes[0], 'startevent', times[0], times[0] - 1e-10))
     gr = np.zeros((len(events), len(events)))
 
-    for bullet in graph_codes: #digraph from row to column
+    for bullet in graph_codes:  # digraph from row to column
       gr[events.index(bullet.parent), events.index(bullet.name)] = bullet.time
     self.graph_matrix = gr
     self.nodes = events
 
   def to_dfg(self):
-    self.dfg = nx.from_numpy_matrix(self.graph_matrix,create_using=nx.DiGraph())
-   # miner =
-    miner_nodes = {a:DrillGraphMiner.nodes[a] for a in self.dfg.nodes}
-    self.dfg = nx.relabel_nodes(self.dfg,miner_nodes)
+    self.dfg = nx.from_numpy_matrix(self.graph_matrix, create_using=nx.DiGraph())
+    miner_nodes = {a: self.nodes[a] for a in self.dfg.nodes}
+    self.dfg = nx.relabel_nodes(self.dfg, miner_nodes)
     self.graph_edges = list(map(lambda x: (str(x[0]), str(x[1])), list(self.dfg.edges())))
     self.graph_nodes = self.dfg.nodes()
     return self.dfg
