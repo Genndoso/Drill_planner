@@ -18,7 +18,9 @@ class DrillPlaner():
   def graph_graphviz(self):
     painter = GraphvizPainter()
     painter.apply(self.Miner.graph)
-    painter.show()
+    self.painter = painter
+    self.painter.show()
+  #  painter.write_graph(f"{self.Miner}.png", format='png')
   def digraph(self, tol = 2):
     G = nx.DiGraph()
     time = np.round(self.data[self.time_idx].values,tol)
@@ -140,5 +142,5 @@ class DrillGraphMiner():
     miner_nodes = {a: self.nodes[a] for a in self.dfg.nodes}
     self.dfg = nx.relabel_nodes(self.dfg, miner_nodes)
     self.graph_edges = list(map(lambda x: (str(x[0]), str(x[1])), list(self.dfg.edges())))
-    self.graph_nodes = self.dfg.nodes()
+    self.graph_nodes = list(map(str, self.dfg.nodes()))
     return self.dfg
