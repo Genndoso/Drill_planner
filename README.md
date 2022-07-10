@@ -5,4 +5,4 @@ Implementation of graph based approach for well operations planning. Process min
 ![alt text](https://github.com/Genndoso/Drill-planner/blob/master/Process%20mining%20graphs/Exploratory%20casing/causal_miner.png)
 
 NetworkX representation of obtained directly-follows graph
-![alt text]([https://github.com/Genndoso/Drill-planner/blob/master/Process%20mining%20graphs/Exploratory%20casing/causal_miner.png](https://github.com/Genndoso/Drill-planner/blob/master/Process%20mining%20graphs/Graph.png))
+![alt text](https://github.com/Genndoso/Drill-planner/blob/master/Process%20mining%20graphs/Graph.png)
