@@ -6,10 +6,10 @@ import sberpm
 #import pm4py
 from sklearn.preprocessing import LabelEncoder
 from sberpm.metrics import ActivityMetric, TransitionMetric, IdMetric, TraceMetric, UserMetric
-
+from sberpm.visual import GraphvizPainter
 
 class DrillPlaner():
-    def __init__(self, Miner, dataholder, data, time_idx,stats):
+    def __init__(self, Miner, dataholder, data, time_idx,stats, ROP_phase):
         super().__init__()
         self.Miner = Miner(dataholder)
         self.Miner.apply()
@@ -19,6 +19,7 @@ class DrillPlaner():
         self.graph_nodes = list(self.Miner.graph.nodes.keys())
         self.graph_edges = list(self.Miner.graph.edges.keys())
         self.stats = stats
+        self.ROP_phase = ROP_phase
 
     def calculate_sberpm_metrics(self):
         '''
@@ -40,7 +41,7 @@ class DrillPlaner():
         trace_metric = TraceMetric(self.data_holder, time_unit='day')
         trace_metric.apply()
 
-        return acitvity_metric, transition_metric, id_metric, trace_metric
+        return activity_metric, transition_metric, id_metric, trace_metric
 
 
 
@@ -59,7 +60,7 @@ class DrillPlaner():
         self.G = G
         return G
 
-    def plan_calculation(self,plan: list, digraph, type_of_phase, algorithm='dijkstra'):
+    def plan_calculation(self, plan: list, digraph, type_of_phase, algorithm='dijkstra'):
         plan.append('endevent')
         path = []
         time = []
@@ -88,15 +89,15 @@ class DrillPlaner():
         for i in range(0, len(path) - 1):
             try:
                 code = int(path[i][1])
-                name_of_operation = data[data['Operation code'] == code]['Type of work'].iloc[0]
+                name_of_operation = self.data[self.data['Operation code'] == code]['Type of work'].iloc[0]
 
                 # find best time in offset
-                median_time = self.stats.loc[(stats['Operation code'] == code) & (self.stats['Phase'] == type_of_phase)][
+                median_time = self.stats.loc[(self.stats['Operation code'] == code) & (self.stats['Phase'] == type_of_phase)][
                     'median'].values
                 stats_time.append(median_time[0])
 
                 if code < 300:
-                    ROP_mean = ROP_phase[ROP_phase['Phase'] == type_of_phase]['mean'].values
+                    ROP_mean = self.ROP_phase[self.ROP_phase['Phase'] == type_of_phase]['mean'].values
                     print(
                         f'Code of operation {path[i][1]}. Operation time in trace {time[i]} h. Median time in offset  {round(median_time[0], 2)} h. {name_of_operation}'
                         f' Mean rate of penetration of this section {round(ROP_mean[0], 2)} m/h')
